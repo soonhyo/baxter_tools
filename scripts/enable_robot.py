@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 # Copyright (c) 2013-2015, Rethink Robotics
 # All rights reserved.
@@ -37,6 +37,7 @@ import baxter_interface
 
 from baxter_interface import CHECK_VERSION
 
+import time;
 
 def main():
     parser = argparse.ArgumentParser()
@@ -64,20 +65,24 @@ def main():
     rospy.init_node('rsdk_robot_enable')
     rs = baxter_interface.RobotEnable(CHECK_VERSION)
 
-    try:
-        for act in args.actions:
-            if act == 'state':
-                print rs.state()
-            elif act == 'enable':
-                rs.enable()
-            elif act == 'disable':
-                rs.disable()
-            elif act == 'reset':
-                rs.reset()
-            elif act == 'stop':
-                rs.stop()
-    except Exception, e:
-        rospy.logerr(e.strerror)
+    timeout =time.time() + 60*2; # 2 min
+
+    while True and time.time() < timeout:
+        try:
+            for act in args.actions:
+                if act == 'state':
+                    print(rs.state())
+                elif act == 'enable':
+                    rs.enable()
+                elif act == 'disable':
+                    rs.disable()
+                elif act == 'reset':
+                    rs.reset()
+                elif act == 'stop':
+                    rs.stop()
+            break
+        except Exception as e:
+            rospy.logerr(e.strerror)
 
     return 0
 
